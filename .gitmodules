@@ -1,0 +1,12 @@
+[submodule "libraries/hump"]
+	path = libraries/hump
+	url = https://github.com/HDictus/hump.git
+[submodule "libraries/json"]
+	path = libraries/json
+	url = https://github.com/rxi/json.lua.git
+[submodule "libraries/cron"]
+	path = libraries/cron
+	url = https://github.com/kikito/cron.lua.git
+[submodule "libraries/twitch"]
+	path = libraries/twitch
+	url = https://github.com/NEKERAFA/twitch.lua.git
