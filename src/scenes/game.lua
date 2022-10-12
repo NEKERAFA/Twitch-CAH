@@ -1,10 +1,14 @@
 local gamestate = require "libraries.hump.gamestate"
 local twitch = require "libraries.twitch.twitch-love"
 
---local chat_manager = require "managers.chat"
 local players_manager = require "src.managers.players"
 local cards_manager = require "src.managers.cards"
 local votes_manager = require "src.managers.votes"
+local settings_manager = require "src.managers.settings"
+
+local draw_utils = require "src.utils.draw"
+
+local card_sprite = require "src.sprites.card"
 
 local game = {}
 
@@ -23,31 +27,61 @@ function game:enter()
 
     -- escogemos la carta a jugar
     self.black = cards_manager:selectblack()
-    twitch.send(string.format("%q", self.black.text))
+    self.black_sprite = card_sprite(true, self.black.text)
+    if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
+        twitch.send(string.format("%q", self.black.text))
+    end
+
+    -- Empezamos el turno
+    self.startTurn()
 
     -- Añadimos el comando de escoger carta
-    twitch.attach("pick", self.onPickACard)
+    if _DEBUG then
+        twitch.attach("pick", self.onPickACard)
+    end
+end
 
-    self.startTurn()
+function game:draw()
+    if self.black_sprite then
+        self.black_sprite:draw(10, 10)
+    end
+
+    if self.cards_sprites and self.player <= players_manager:countselected() then
+        draw_utils.print_text(string.format("¡Te toca, %s! Elige una de las de abajo", self.players[self.player]), 10, 170)
+
+        for i, card in ipairs(self.cards_sprites) do
+            card:draw(10 + (i - 1) * 120, 195)
+        end
+    end
 end
 
 function game.startTurn()
     game.cards = cards_manager:selectwhites()
+    game.cards_sprites = {}
 
     -- Le indicamos al jugador la carta a escoger
-    twitch.send(string.format("@%s, te toca. Escoge una de las siguientes opciones con %q", game.players[game.player], "!pick numero"))
-    for i, card in ipairs(game.cards) do
-        twitch.send(string.format("%i - %s", i, card.text))
-    end
-end
+    if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
+        twitch.send(string.format("@%s, te toca. Escoge una de las siguientes opciones con %q", game.players[game.player], "!pick numero"))
 
-function game.startVote()
-    twitch.send(string.format("Hora de votar. Podeis usar %q para elegir la carta que más os guste", "!vote player"))
-    twitch.attach("vote", game.onVote)
-    twitch.settimer("onVoteClosed", 20, game.onVoteClosed)
+        if settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.MINIMAL then
+            for i, card in ipairs(game.cards) do
+                twitch.send(string.format("%i - %s", i, card.text))
+            end
+        end
+    end
+
+    for i, card in ipairs(game.cards) do
+        table.insert(game.cards_sprites, card_sprite(false, string.format("%i. %s", i, card.text)))
+    end
+
+    twitch.settimer("onTurnFinished", 10, game.onTurnFinished)
 end
 
 function game.onPickACard(_, username, cardPicked)
+    if twitch.timers["onTurnFinished"] then
+        twitch.removetimer("onTurnFinished")
+    end
+
     if username == game.players[game.player] then
         local parsed_card = tonumber(cardPicked)
 
@@ -62,11 +96,33 @@ function game.onPickACard(_, username, cardPicked)
             if game.player <= players_manager:countselected() then
                 game.startTurn()
             else
-                twitch.detach("pick")
+                if not _DEBUG then twitch.detach("pick") end
                 game.startVote()
             end
         end
     end
+end
+
+function game.onTurnFinished()
+    if not _DEBUG then
+        twitch.detach("pick")
+    end
+
+    twitch.removetimer("onTurnFinished")
+
+    game.onPickACard(nil, game.players[game.player], love.math.random(1, 4))
+end
+
+function game.startVote()
+    if not _DEBUG then
+        if settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE then
+            twitch.send(string.format("Hora de votar. Podeis usar %q para elegir la carta que más os guste", "!vote player"))
+        end
+
+        twitch.attach("vote", game.onVote)
+    end
+
+    twitch.settimer("onVoteClosed", 30, game.onVoteClosed)
 end
 
 function game.onVote(_, username, player)
@@ -85,17 +141,22 @@ function game.onVote(_, username, player)
     end
 
     -- Añado el voto con el usuario que lo emite
-    if vote and (vote ~= username) and not votes_manager:userhasvoted(username) then
+    if vote and (string.lower(vote) ~= string.lower(username)) and not votes_manager:userhasvoted(username) then
         print(string.format("> %s has voted to %s", username, vote))
         votes_manager:vote(username, vote)
     end
 end
 
 function game.onVoteClosed()
-    twitch.detach("vote")
+    if not _DEBUG then
+        twitch.detach("vote")
+    end
+
     twitch.removetimer("onVoteClosed")
 
-    twitch.send("Las votaciones han finalizado. Estoy calculando les ganadories.")
+    if not _DEBUG and (settings_manager.data.chat_level == settings_manager.CHAT_LEVEL_VALUES.ALL) then
+        twitch.send("Las votaciones han finalizado. Estoy calculando les ganadories.")
+    end
 
     -- Obtenemos la lista de votos
     local votes = votes_manager:countvotes()
@@ -113,9 +174,13 @@ function game.onVoteClosed()
         end
 
         -- Imprimo les ganadories
-        twitch.send(string.format("Les ganadories son %s :)", winners))
+        if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
+            twitch.send(string.format("Les ganadories son %s :)", winners))
+        end
     else
-        twitch.send("No se ha selecionado a nadie :(")
+        if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
+            twitch.send("No se ha selecionado a nadie :(")
+        end
     end
 end
 

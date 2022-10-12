@@ -5,10 +5,12 @@ local votes_manager = {
 }
 
 function votes_manager:vote(username, player)
+    player = string.lower(player)
     if not self.votes[player] then
         self.votes[player] = {}
     end
 
+    username = string.lower(username)
     if not self.votes[player][username] then
         self.votes[player][username] = true
     end
@@ -16,7 +18,7 @@ end
 
 function votes_manager:userhasvoted(username)
     for _, users in pairs(self.votes) do
-        if users[username] then
+        if users[string.lower(username)] then
             return true
         end
     end

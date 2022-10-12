@@ -44,7 +44,7 @@ function table_utils.pick(tbl, n)
     while picked_size < n do
         local selected_pos = love.math.random(tbl_size - picked_size)
         local key = nil
-        for i = 1, selected_pos do
+        for _ = 1, selected_pos do
             key = next(keys, key)
         end
 

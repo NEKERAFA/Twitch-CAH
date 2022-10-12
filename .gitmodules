@@ -10,3 +10,6 @@
 [submodule "libraries/twitch"]
 	path = libraries/twitch
 	url = https://github.com/NEKERAFA/twitch.lua.git
+[submodule "libraries/ini"]
+	path = libraries/ini
+	url = https://github.com/nobytesgiven/ini_parser.git

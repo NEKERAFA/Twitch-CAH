@@ -1,7 +1,7 @@
 local table_utils = require "src.utils.table"
 
 local players_manager = {
-    players = {["nekerafa"] = true},
+    players = {},
     selected = {}
 }
 
@@ -25,7 +25,7 @@ end
 
 function players_manager:includeselected(nick)
     for _, player in ipairs(self.selected) do
-        if player == nick then
+        if string.lower(player) == string.lower(nick) then
             return true
         end
     end
@@ -50,6 +50,18 @@ end
 
 function players_manager:countselected()
     return table_utils.size(self.selected)
+end
+
+function players_manager:iterate()
+    local value = nil
+    local index = 1
+
+    local function iterator(players, index)
+        value = next(players, value)
+        return value and (index + 1), value
+    end
+
+    return iterator, players_manager.players, index
 end
 
 function players_manager:clear()

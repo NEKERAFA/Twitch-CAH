@@ -15,34 +15,63 @@ function cards:load()
 end
 
 function cards:selectblack()
-    local selected = love.math.random(table_utils.size(self.blacks))
+    local blacks_size = table_utils.size(self.blacks)
+    -- Si se vacía la lista de cartas a jugar, volvemos a insertar las descartadas
+    if blacks_size == 0 then
+        for _, card in ipairs(self.selected.blacks) do
+            table.insert(self.blacks, card)
+        end
+
+        blacks_size = table_utils.size(self.blacks)
+        self.selected.blacks = {}
+    end
+
+    local selected = love.math.random(blacks_size)
     local card = self.blacks[selected]
-    
-    table.insert(self.selected.blacks, selected)
+
+    -- Descartamos la carta elegida
+    table.insert(self.selected.blacks, card)
+    table.remove(self.blacks, selected)
 
     -- debug
-    print(string.format("black card: %q", json.encode(card)))
+    print(string.format("black card: %s", json.encode(card)))
 
     return card
 end
 
 function cards:selectwhites()
-    local selected = table_utils.pick(self.whites, 4)
-    local cards = {}
+    -- Si nos hemos quedado sin cartas para jugar, cogemos del descarte
+    if table_utils.size(self.whites) == 0 then
+        for _, card in ipairs(self.selected.whites) do
+            table.insert(self.whites, card)
+        end
 
-    for _, card in ipairs(selected) do
-        table.insert(cards, { card = card, text = self.whites[card] })
+        self.selected.whites = {}
     end
 
-    print(string.format("white cards: %q", json.encode(cards)))
+    local selected = table_utils.pick(self.whites, 4)
+    local selected_cards = {}
 
-    return cards
+    for _, card in ipairs(selected) do
+        table.insert(selected_cards, { card = card, text = self.whites[card] })
+    end
+
+    -- debug
+    print(string.format("white cards: %s", json.encode(selected_cards)))
+
+    return selected_cards
 end
 
-function cards:pickwhite(card)
-    local selected = self.whites[card]
+function cards:pickwhite(selected)
+    local card = self.whites[selected]
 
-    table.insert(self.selected.whites, selected)
+    table.insert(self.selected.whites, card)
+    table.remove(self.whites, selected)
+
+    -- debug
+    print(string.format("white card: %s", json.encode(card)))
+
+    return card
 end
 
 return cards
