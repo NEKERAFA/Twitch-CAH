@@ -1,4 +1,5 @@
 local gamestate = require "libraries.hump.gamestate"
+local timer = require "libraries.hump.timer"
 local twitch = require "libraries.twitch.twitch-love"
 
 local players_manager = require "src.managers.players"
@@ -9,6 +10,7 @@ local settings_manager = require "src.managers.settings"
 local draw_utils = require "src.utils.draw"
 
 local card_sprite = require "src.sprites.card"
+local card = require "src.entity.card"
 
 local game = {}
 
@@ -26,8 +28,7 @@ function game:enter()
     self.players = players_manager:select()
 
     -- escogemos la carta a jugar
-    self.black = cards_manager:selectblack()
-    self.black_sprite = card_sprite(true, self.black.text)
+    self.black = card(cards_manager:selectblack(), true)
     if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
         twitch.send(string.format("%q", self.black.text))
     end
@@ -41,23 +42,32 @@ function game:enter()
     end
 end
 
+function game:update(dt)
+    timer.update(dt)
+    --print(self.black.position.y)
+end
+
 function game:draw()
-    if self.black_sprite then
-        self.black_sprite:draw(10, 10)
+    if self.black then
+        self.black:draw()
     end
 
-    if self.cards_sprites and self.player <= players_manager:countselected() then
+    if self.cards and self.player <= players_manager:countselected() then
         draw_utils.print_text(string.format("¡Te toca, %s! Elige una de las de abajo", self.players[self.player]), 10, 170)
 
-        for i, card in ipairs(self.cards_sprites) do
-            card:draw(10 + (i - 1) * 120, 195)
+        for i, entity in ipairs(self.cards) do
+            entity:draw()
         end
     end
 end
 
 function game.startTurn()
-    game.cards = cards_manager:selectwhites()
-    game.cards_sprites = {}
+    local card_info = cards_manager:selectwhites()
+    game.cards = {}
+
+    for i, info in ipairs(card_info) do
+        table.insert(game.cards, card(info, false, i))
+    end
 
     -- Le indicamos al jugador la carta a escoger
     if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
@@ -68,10 +78,6 @@ function game.startTurn()
                 twitch.send(string.format("%i - %s", i, card.text))
             end
         end
-    end
-
-    for i, card in ipairs(game.cards) do
-        table.insert(game.cards_sprites, card_sprite(false, string.format("%i. %s", i, card.text)))
     end
 
     twitch.settimer("onTurnFinished", 10, game.onTurnFinished)

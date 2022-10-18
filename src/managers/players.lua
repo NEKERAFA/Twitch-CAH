@@ -1,7 +1,7 @@
 local table_utils = require "src.utils.table"
 
 local players_manager = {
-    players = {},
+    players = {["nekerafa"] = true},
     selected = {}
 }
 
