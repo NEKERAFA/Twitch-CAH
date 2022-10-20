@@ -9,7 +9,6 @@ local settings_manager = require "src.managers.settings"
 
 local draw_utils = require "src.utils.draw"
 
-local card_sprite = require "src.sprites.card"
 local card = require "src.entity.card"
 
 local game = {}
@@ -28,23 +27,18 @@ function game:enter()
     self.players = players_manager:select()
 
     -- escogemos la carta a jugar
-    self.black = card(cards_manager:selectblack(), true)
+    local time = love.math.random() * 0.5 + 0.5
+    self.black = card(cards_manager:selectblack(), true, time)
     if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
         twitch.send(string.format("%q", self.black.text))
     end
 
-    -- Empezamos el turno
-    self.startTurn()
-
-    -- Añadimos el comando de escoger carta
-    if _DEBUG then
-        twitch.attach("pick", self.onPickACard)
-    end
+    -- Empezamos el turno cuando termine la animación
+    timer.after(time, self.startTurn)
 end
 
 function game:update(dt)
     timer.update(dt)
-    --print(self.black.position.y)
 end
 
 function game:draw()
@@ -52,35 +46,53 @@ function game:draw()
         self.black:draw()
     end
 
-    if self.cards and self.player <= players_manager:countselected() then
+    if self.cards then
         draw_utils.print_text(string.format("¡Te toca, %s! Elige una de las de abajo", self.players[self.player]), 10, 170)
 
-        for i, entity in ipairs(self.cards) do
-            entity:draw()
+        for _, entity in ipairs(self.cards) do
+            if entity.type and entity.type == "card" then
+                entity:draw()
+            end
         end
     end
 end
 
 function game.startTurn()
-    local card_info = cards_manager:selectwhites()
-    game.cards = {}
+    game.cards = cards_manager:selectwhites()
+    game.dropWhiteCard(1)
+end
 
-    for i, info in ipairs(card_info) do
-        table.insert(game.cards, card(info, false, i))
-    end
+function game.dropWhiteCard(position)
+    if position <= #game.cards then
+        -- Convertimos una información de una carta blanca en una entidad 'carta' que inicia una animación
+        local info = game.cards[position]
+        local time = love.math.random() * 0.5 + 0.5
+        game.cards[position] = card(info, false, time, position)
 
-    -- Le indicamos al jugador la carta a escoger
-    if not _DEBUG and (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
-        twitch.send(string.format("@%s, te toca. Escoge una de las siguientes opciones con %q", game.players[game.player], "!pick numero"))
+        -- Cuando acaba la animación, lanza otra carta
+        timer.after(time, function()
+            game.dropWhiteCard(position + 1)
+        end)
+    else
+        -- Le indicamos al jugador la carta a escoger
+        if not _DEBUG then
+            if (settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.NONE) then
+                twitch.send(string.format("@%s, te toca. Escoge una de las siguientes opciones con %q", game.players[game.player], "!pick numero"))
 
-        if settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.MINIMAL then
-            for i, card in ipairs(game.cards) do
-                twitch.send(string.format("%i - %s", i, card.text))
+                if settings_manager.data.chat_level ~= settings_manager.CHAT_LEVEL_VALUES.MINIMAL then
+                    for i, card in ipairs(game.cards) do
+                        twitch.send(string.format("%i - %s", i, card.text))
+                    end
+                end
             end
-        end
-    end
 
-    twitch.settimer("onTurnFinished", 10, game.onTurnFinished)
+            -- Añade el comando de coger cartas
+            twitch.attach("pick", game.onPickACard)
+        end
+
+        -- Finaliza el turno pasados 10 segundos
+        twitch.settimer("onTurnFinished", 10, game.onTurnFinished)
+    end
 end
 
 function game.onPickACard(_, username, cardPicked)
@@ -93,10 +105,16 @@ function game.onPickACard(_, username, cardPicked)
 
         if parsed_card then
             -- Un jugador escogió una carta
-            local card = game.cards[tonumber(cardPicked)].card
-            cards_manager:pickwhite(card)
-            table.insert(game.whites, card)
+            local card_pos = game.cards[parsed_card].card
+            cards_manager:pickwhite(card_pos)
+            table.insert(game.whites, card_pos)
             game.player = game.player + 1
+
+            for i, entity in ipairs(game.cards) do
+                if i ~= parsed_card then
+                    entity:discard()
+                end
+            end
 
             -- Comprobamos si pasamos al siguiente turno, o a los votos
             if game.player <= players_manager:countselected() then
