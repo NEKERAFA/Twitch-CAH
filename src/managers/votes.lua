@@ -35,8 +35,14 @@ function votes_manager:countvotes()
 
     -- Ordenamos los votos de mayor a menor
     table.sort(votes, function (a, b)
-        return a.votes < b.votes
+        return a.votes > b.votes
     end)
+
+    if _DEBUG then
+        for i, v in ipairs(votes) do
+            print(i, ("(%s, %i)"):format(v.nick, v.votes))
+        end
+    end
 
     return votes
 end

@@ -1,9 +1,14 @@
 local table_utils = require "src.utils.table"
 
 local players_manager = {
-    players = {["nekerafa"] = true},
+    players = {},
     selected = {}
 }
+
+if _DEBUG then
+    players_manager.players["nekerafa"] = true
+    players_manager.players["gatipedrobot"] = true
+end
 
 function players_manager:join(nick)
     if not self.players[nick] then
@@ -34,7 +39,7 @@ function players_manager:includeselected(nick)
 end
 
 function players_manager:select()
-    self.selected = table_utils.pick(self.players, 1)
+    self.selected = table_utils.pickuntil(self.players, 4)
 
     -- debug
     for _, player in ipairs(self.selected) do
@@ -56,7 +61,7 @@ function players_manager:iterate()
     local value = nil
     local index = 1
 
-    local function iterator(players, index)
+    local function iterator(players)
         value = next(players, value)
         return value and (index + 1), value
     end

@@ -1,6 +1,6 @@
 local class = require "libraries.hump.class"
 
-local card_font = love.graphics.newFont(14)
+local card_font = love.graphics.newFont(28)
 
 -- blanca o negra
 -- texto
@@ -10,7 +10,7 @@ local card = class {
     height = 200,
 
     init = function (self, ismaster, text)
-        self.sprite = love.graphics.newCanvas(self.width, self.height)
+        self.sprite = love.graphics.newCanvas(self.width * 2, self.height * 2)
         self.sprite:renderTo(function()
             local lastColor = { love.graphics.getColor() }
 
@@ -20,7 +20,8 @@ local card = class {
             else
                 love.graphics.setColor(1, 1, 1, 1)
             end
-            love.graphics.rectangle("fill", 0, 0, self.width, self.height, 16, 16)
+            love.graphics.rectangle("fill", 0, 0, self.width * 2, self.height * 2, 16, 16)
+            love.graphics.rectangle("line", 0, 0, self.width * 2, self.height * 2, 16, 16)
 
             -- Dibujamos el texto de la carta
             if ismaster then
@@ -28,15 +29,19 @@ local card = class {
             else
                 love.graphics.setColor(0, 0, 0, 1)
             end
-            love.graphics.printf(text, card_font, 20, 20, self.width - 40)
+            love.graphics.printf(text, card_font, 40, 40, self.width * 2 - 80)
 
             love.graphics.setColor(lastColor)
         end)
+        --self.sprite:setFilter("linear")
     end,
 
-    draw = function (self, x, y, angle)
-        local offset_y = (self.ismaster and 0) or self.height
-        love.graphics.draw(self.sprite, x, y + offset_y, angle, 1, 1, self.width / 2, offset_y)
+    release = function (self)
+        self.sprite:release()
+    end,
+
+    draw = function (self, x, y, angle, size)
+        love.graphics.draw(self.sprite, x, y, angle, 0.5 * size, 0.5 * size, self.width)
     end
 }
 

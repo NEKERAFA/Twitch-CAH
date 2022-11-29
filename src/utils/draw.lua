@@ -1,6 +1,8 @@
+local font_manager = require "src.managers.fonts"
+
 local draw_utils = {}
 
-local font = love.graphics.newFont("data/assets/fonts/Sniglet-Regular.ttf", 20)
+local font = font_manager:load("Sniglet-Regular.ttf", 20)
 
 function draw_utils.print_text(text, x, y, color, bg)
     color = color or { 1, 1, 1 }

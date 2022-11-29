@@ -6,10 +6,13 @@ local twitch = require "libraries.twitch.twitch-love"
 
 local settings_manager = require "src.managers.settings"
 
-local draw_utils = require "src.utils.draw"
+--local draw_utils = require "src.utils.draw"
 
 --local start = require "src.scenes.start"
-local game = require "src.scenes.game"
+local game = require "src.gamestates.game"
+local main_menu = require "src.gamestates.main_menu"
+
+local ui_element = require "src.entities.ui_element"
 
 local checkConnection = nil
 local checkJoin = nil
@@ -20,14 +23,19 @@ function love.load()
         checkConnection = twitch.connect(_USERNAME, _TOKEN_AUTH)
     end
 
-    love.graphics.setBackgroundColor(0, 1, 0, 1)
+    love.graphics.setBackgroundColor(0, 0, 0, 1)
 
     -- Cargamos los ajustes
     settings_manager.load()
 
+    -- Cargamos los assets
+    ui_element.load_sounds()
+
+    love.keyboard.setKeyRepeat(true)
+
     -- debug
     if _DEBUG then
-        gamestate.switch(game)
+        gamestate.switch(main_menu)
         gamestate.registerEvents()
     end
 end

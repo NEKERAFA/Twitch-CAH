@@ -8,4 +8,13 @@ function string_utils.split(str, delim)
     return tokens
 end
 
+function string_utils.random(m)
+    local buffer = {}
+    for _ = 1, m do
+        local byte = love.math.random(97, 122)
+        table.insert(buffer, byte)
+    end
+    return string.char(unpack(buffer))
+end
+
 return string_utils

@@ -13,3 +13,6 @@
 [submodule "libraries/ini"]
 	path = libraries/ini
 	url = https://github.com/nobytesgiven/ini_parser.git
+[submodule "libraries/mlib"]
+	path = libraries/mlib
+	url = https://github.com/davisdude/mlib.git
