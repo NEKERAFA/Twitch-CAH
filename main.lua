@@ -6,11 +6,9 @@ local twitch = require "libraries.twitch.twitch-love"
 
 local settings_manager = require "src.managers.settings"
 
---local draw_utils = require "src.utils.draw"
-
---local start = require "src.scenes.start"
-local game = require "src.gamestates.game"
 local main_menu = require "src.gamestates.main_menu"
+local game = require "src.gamestates.game"
+local edit = require "src.gamestates.edit"
 
 local ui_element = require "src.entities.ui_element"
 
@@ -35,7 +33,7 @@ function love.load()
 
     -- debug
     if _DEBUG then
-        gamestate.switch(main_menu)
+        gamestate.switch(edit)
         gamestate.registerEvents()
     end
 end

@@ -2,9 +2,6 @@ local class = require "libraries.hump.class"
 
 local card_font = love.graphics.newFont(28)
 
--- blanca o negra
--- texto
--- huecos
 local card = class {
     width = 150,
     height = 200,

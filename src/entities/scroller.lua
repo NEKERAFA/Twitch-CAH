@@ -22,6 +22,12 @@ local scroller = class {
         self.height = math.max(self.height, element.position.y + element:getheight())
     end,
 
+    onmousemoved = function (self, mx, my)
+        for _, element in ipairs(self.elements) do
+            element.object:onmousemoved(mx, my)
+        end
+    end,
+
     draw = function (self)
         for _, element in ipairs(self.elements) do
             element.object:draw()

@@ -14,6 +14,10 @@ function ui_element:init(sprite)
     self.sprite = sprite
 end
 
+function ui_element:release()
+    self.sprite:release()
+end
+
 function ui_element:move(ox, oy)
     self.position.x = ox
     self.position.y = oy
