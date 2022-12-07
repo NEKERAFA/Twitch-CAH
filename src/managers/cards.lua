@@ -1,5 +1,6 @@
 local json = require "libraries.json.json"
 
+local decks_manager = require "src.managers.decks"
 local table_utils = require "src.utils.table"
 
 local cards = {
@@ -9,9 +10,10 @@ local cards = {
     }
 }
 
-function cards:load()
-    self.blacks = json.decode(assert(love.filesystem.read("data/black_cards.json")))
-    self.whites = json.decode(assert(love.filesystem.read("data/white_cards.json")))
+function cards:load(deck_name)
+    local deck = decks_manager:load(deck_name or "default")
+    self.blacks = deck.blacks
+    self.whites = deck.whites
 end
 
 function cards:selectblack()

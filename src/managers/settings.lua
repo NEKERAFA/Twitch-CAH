@@ -4,7 +4,7 @@ local settings_manager = {
     data = {
         chat_level = "MINIMAL" -- NONE, MINIMAL, ALL
     },
-    
+
     CHAT_LEVEL_VALUES = {
         NONE = "NONE",
         MINIMAL = "MINIMAL",

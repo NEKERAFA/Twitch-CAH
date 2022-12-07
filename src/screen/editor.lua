@@ -1,6 +1,8 @@
+local scroller = require "src.entities.scroller"
+
 local editor = {}
 
-function editor:enter(item)
+function editor:enter(path_deck)
     
 end
 

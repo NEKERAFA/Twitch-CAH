@@ -30,7 +30,10 @@ local new_deck_button = class {
 
         love.graphics.setLineWidth(2)
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.circle(hover and "fill" or "line", x + 64, y + 64, 48, 100)
+        love.graphics.circle("line", x + 64, y + 64, 48, 100)
+        if hover then
+            love.graphics.circle("fill", x + 64, y + 64, 48, 100)
+        end
 
         if hover then
             love.graphics.setColor(0, 0, 0, 1)

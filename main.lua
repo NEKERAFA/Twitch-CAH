@@ -5,6 +5,7 @@ local gamestate = require "libraries.hump.gamestate"
 local twitch = require "libraries.twitch.twitch-love"
 
 local settings_manager = require "src.managers.settings"
+local screen_manager = require "src.managers.screen"
 
 local main_menu = require "src.gamestates.main_menu"
 local game = require "src.gamestates.game"
@@ -56,9 +57,15 @@ function love.update(dt)
 end
 
 function love.draw()
+    screen_manager:prepare()
+
     if not _DEBUG and (checkConnection or checkJoin) then
         draw_utils.print_text("Conectando a twitch", 10, 10)
     end
+end
+
+function love.resize(width, height)
+    screen_manager:resize(width, height)
 end
 
 function love.quit()

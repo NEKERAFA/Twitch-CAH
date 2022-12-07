@@ -16,3 +16,6 @@
 [submodule "libraries/mlib"]
 	path = libraries/mlib
 	url = https://github.com/davisdude/mlib.git
+[submodule "libraries/push"]
+	path = libraries/push
+	url = https://github.com/Ulydev/push.git

@@ -2,7 +2,7 @@ local main_menu_screen = require "src.screen.main_menu"
 local settings_screen = require "src.screen.settings"
 
 local main_menu = {
-    current_screen = main_menu_screen
+    current_screen = settings_screen
 }
 
 function main_menu:init()

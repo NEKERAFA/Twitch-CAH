@@ -19,6 +19,7 @@ function game:enter()
     -- inicialimos el estado
     self.state = nil
     self.whites = {}
+    self.votes = {}
     self.player = 1
 
     -- cargamos las cartas
@@ -216,7 +217,7 @@ function game.onVote(_, username, player)
     if vote and (string.lower(vote) ~= string.lower(username)) and not votes_manager:userhasvoted(username) then
         print(string.format("> %s has voted to %s", username, vote))
         local player_pos = game.playerToCardPlayer(vote)
-        game.votes[player_pos] = (game.votes[player_pos] and 0) or (game.votes[player_pos] + 1)
+        game.votes[player_pos] = game.votes[player_pos] and (game.votes[player_pos] + 1) or 0
         votes_manager:vote(username, vote)
     end
 end
