@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cards Against Humanity (unofficial)</title>
+    <script>
+        const hash_url = window.location.hash;
+        const access_token_str = hash_url.substring(hash_url.indexOf("#") + 1, hash_url.indexOf("&"));
+        const access_token = access_token_str.split("=")[1];
+        fetch("http://localhost:3000/access_token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([ access_token ])
+        }).then(ok => {
+            document.getElementById("message").innerText = "Authentication was success, you can close this window."
+        }).catch(error => {
+            document.getElementById("message").innerText = "There is some problem, check console log."
+            console.error(error)
+        });
+    </script>
+    <style>
+        body { font-family: monospace; font-size: 14px; color: white; background-color: black; }
+    </style>
+</head>
+    <body>
+        <p id="message">Waiting...</p>
+        <noscript>
+            <p>We cannot get your access token. Enabled javascript.</p>
+        </noscript>
+    </body>
+</html>
