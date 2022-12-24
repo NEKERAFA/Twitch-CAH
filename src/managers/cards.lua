@@ -10,10 +10,53 @@ local cards = {
     }
 }
 
+function cards:new(deck_name)
+    self.name = deck_name
+    self.blacks = {}
+    self.whites = {}
+end
+
 function cards:load(deck_name)
-    local deck = decks_manager:load(deck_name or "default")
+    local deck = decks_manager:load(deck_name or "default", false)
+    self.name = deck_name
     self.blacks = deck.blacks
     self.whites = deck.whites
+end
+
+function cards:save()
+    decks_manager:updatedeck(self.name, self.blacks, self.whites, false)
+end
+
+function cards:addwhite(text)
+    local id = #self.whites
+    table.insert(self.whites, text)
+    return id
+end
+
+function cards:removewhite(id)
+    table.remove(self.whites, id)
+end
+
+function cards:updatewhite(id, new_text)
+    self.whites[id] = new_text
+end
+
+function cards:addblack(text, picked_cards)
+    local id = #self.blacks
+    table.insert(self.blacks, { text = text, pick = picked_cards })
+    return id
+end
+
+function cards:removeblack(id)
+    table.remove(self.blacks, id)
+end
+
+function cards:updateblacktext(id, new_text)
+    self.blacks[id].text = new_text
+end
+
+function cards:updateblackpickedcards(id, picked_cards)
+    self.blacks[id].pick = picked_cards
 end
 
 function cards:selectblack()

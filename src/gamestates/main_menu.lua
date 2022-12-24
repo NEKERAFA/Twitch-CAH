@@ -1,8 +1,10 @@
+local screen_manager = require "src.managers.screen"
+
 local main_menu_screen = require "src.screen.main_menu"
 local settings_screen = require "src.screen.settings"
 
 local main_menu = {
-    current_screen = main_menu_screen
+    current_screen = settings_screen
 }
 
 function main_menu:init()
@@ -11,19 +13,21 @@ end
 
 function main_menu:mousemoved(mx, my)
     if self.current_screen.mousemoved then
-        self.current_screen:mousemoved(mx, my)
+        self.current_screen:mousemoved(screen_manager:windowtoscreen(mx, my))
     end
 end
 
 function main_menu:mousepressed(mx, my, mbutton)
     if self.current_screen.mousepressed then
-        self.current_screen:mousepressed(mx, my, mbutton)
+        local dmx, dmy = screen_manager:windowtoscreen(mx, my)
+        self.current_screen:mousepressed(dmx, dmy, mbutton)
     end
 end
 
 function main_menu:mousereleased(mx, my, mbutton)
     if self.current_screen.mousereleased then
-        local pressed = self.current_screen:mousereleased(mx, my, mbutton)
+        local dmx, dmy = screen_manager:windowtoscreen(mx, my)
+        local pressed = self.current_screen:mousereleased(dmx, dmy, mbutton)
         if self.current_screen == main_menu_screen then
             if pressed == "button2" then
                 --pass

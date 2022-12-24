@@ -15,7 +15,7 @@ local ui_element = require "src.entities.ui_element"
 local checkConnection = nil
 local checkJoin = nil
 
-local auth = require "src.managers.auth"
+--local auth = require "src.managers.auth"
 
 function love.load()
     -- Cargamos los ajustes
@@ -35,9 +35,9 @@ function love.load()
 
     -- debug
     if _DEBUG then
-        --gamestate.switch(main_menu)
-        --gamestate.registerEvents()
-        auth:performaccesstoken()
+        gamestate.switch(edit)
+        gamestate.registerEvents()
+        --auth:performaccesstoken()
     end
 end
 
@@ -68,7 +68,7 @@ function love.draw()
     if not _DEBUG and (checkConnection or checkJoin) then
         draw_utils.print_text("Conectando a twitch", 10, 10)
     else
-        love.graphics.print(tostring(auth.auth_server:isRunning()), 10, 10)
+        --love.graphics.print(tostring(auth.auth_server:isRunning()), 10, 10)
     end
 end
 

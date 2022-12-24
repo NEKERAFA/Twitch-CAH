@@ -12,8 +12,8 @@ local _BLACK_CARDS_FILE = "black_cards.json"
 local _WHITE_CARDS_FILE = "white_cards.json"
 
 -- Obtiene un mazo en caché (si no está lo carga)
-function decks:load(deck_name)
-    local deck = decks:getdeck(deck_name)
+function decks:load(deck_name, caching)
+    local deck = caching and decks:getdeck(deck_name)
 
     if not deck then
         local path_deck = assert(decks:getdeckpath(deck_name))
@@ -23,8 +23,10 @@ function decks:load(deck_name)
             whites = json.decode(assert(love.filesystem.read(("%s/%s"):format(path_deck, _WHITE_CARDS_FILE))))
         }
 
-        local cache = path_deck:find("^data") and self.system or self.user
-        cache[deck_name] = deck
+        if caching then
+            local cache = path_deck:find("^data") and self.system or self.user
+            cache[deck_name] = deck
+        end
     end
 
     return deck
@@ -58,10 +60,12 @@ function decks:getdeck(deck_name)
 end
 
 -- Actualiza un mazo creado por el usuario en la caché y lo guarda en disco
-function decks:updatedeck(deck_name, blacks, whites)
-    self.user[deck_name] = {
-        blacks = blacks, whites = whites
-    }
+function decks:updatedeck(deck_name, blacks, whites, caching)
+    if caching ~= false then
+        self.user[deck_name] = {
+            blacks = blacks, whites = whites
+        }
+    end
 
     local path_deck = ("%s/%s"):format(_USER_PATH, deck_name)
     if not love.filesystem.getInfo(path_deck, "directory") then

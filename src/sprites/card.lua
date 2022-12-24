@@ -38,7 +38,7 @@ local card = class {
     end,
 
     draw = function (self, x, y, angle, size)
-        love.graphics.draw(self.sprite, x, y, angle, 0.5 * size, 0.5 * size, self.width)
+        love.graphics.draw(self.sprite, x, y, angle or 0, 0.5 * (size or 1), 0.5 * (size or 1), self.width)
     end
 }
 
