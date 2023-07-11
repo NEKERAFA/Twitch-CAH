@@ -1,0 +1,69 @@
+{
+	"masters": [
+		{
+			"text": "Pero antes de que le mate, Mr. Bond, debo mostrarle:",
+			"pick": 1
+		},
+		{
+			"text": "¿Cúal es el deseo culpable de Batman?",
+			"pick": 1
+		},
+		{
+			"text": "Bebo para olvidar _____________.",
+			"pick": 1
+		},
+		{
+			"text": "_____________:\nbueno hasta la última gota.",
+			"pick": 1
+		},
+		{
+			"text": "¿Qué sonido es ese?",
+			"pick": 1
+		},
+		{
+			"text": "¿A qué huele?",
+			"pick": 1
+		},
+		{
+			"text": "¿Qué puedes decir/hacer durante el sexo y comiendo con tus padres?",
+			"pick": 1
+		}
+	],
+	"selectables": [
+		"Destruir las evidencias.",
+		"Gastar mucho dinero.",
+		"¿Abejas?",
+		"Un sombrero muy guapo.",
+		"Fuego amigo.",
+		"La canción del Tiburón.",
+		"Tirarse un pedo e irse.",
+		"Racismo.",
+		"Esperar hasta el matrimonio.",
+		"Tíos que no te vuelven a llamar.",
+		"Machismo.",
+		"Masculinidad Frágil.",
+		"Chupar un Pirulo.",
+		"Frigopie.",
+		"Bromas sobre el Holocausto en un momento inoportuno.",
+		"La tuna.",
+		"La Reina Isabel II.",
+		"Una fiesta de cumpleaños decepcionante.",
+		"Mestruación.",
+		"Propaganda homosexual.",
+		"Practicar un aborto usando una percha.",
+		"Ideología de género.",
+		"TERFs en un expectáculo de Drag.",
+		"El lobby Trans.",
+		"El lobby Gay.",
+		"Ideología queer.",
+		"Ana Rosa Quintana.",
+		"EE.UU.",
+		"Ciencia.",
+		"Chupa-Chups.",
+		"Pezones empitonados.",
+		"Desodorante Old-Spice.",
+		"Hara-Kiri",
+		"Lamer algo y luego decir que es tuyo.",
+		"Comportarse como un gilipollas con los niños."
+	]
+}

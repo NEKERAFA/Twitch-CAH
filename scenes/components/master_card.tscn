@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw212oiqxteya"]
+
+[ext_resource type="FontFile" uid="uid://slybhn1ne6f5" path="res://assets/fonts/roboto-regular.ttf" id="1_4jlse"]
+[ext_resource type="Script" path="res://scenes/components/master_card.gd" id="1_fetpp"]
+[ext_resource type="PackedScene" uid="uid://de34mocqme27a" path="res://scenes/components/pick_container.tscn" id="2_v53qu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vih8h"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.0941176, 0.0941176, 0.0941176, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 2
+shadow_offset = Vector2(1, 1)
+
+[node name="MasterCard" type="PanelContainer"]
+offset_right = 150.0
+offset_bottom = 200.0
+pivot_offset = Vector2(75, 0)
+theme_override_styles/panel = SubResource("StyleBoxFlat_vih8h")
+script = ExtResource("1_fetpp")
+pick_number = 2
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Content" type="Label" parent="Container"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("1_4jlse")
+theme_override_font_sizes/font_size = 14
+text = "[Master Card]"
+autowrap_mode = 3
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="PickContainer" parent="Container" instance=ExtResource("2_v53qu")]
+layout_mode = 2
+alignment = 2

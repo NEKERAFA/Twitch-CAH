@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://bpkxfawflbpew"]
+
+[ext_resource type="FontFile" uid="uid://slybhn1ne6f5" path="res://assets/fonts/roboto-regular.ttf" id="1_kgvow"]
+[ext_resource type="Script" path="res://scenes/components/card.gd" id="1_uqlfa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkab4"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 2
+shadow_offset = Vector2(1, 1)
+
+[node name="Card" type="PanelContainer"]
+offset_right = 150.0
+offset_bottom = 200.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_vkab4")
+script = ExtResource("1_uqlfa")
+
+[node name="Content" type="Label" parent="."]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_kgvow")
+theme_override_font_sizes/font_size = 14
+text = "[Selectable Card]"
+autowrap_mode = 3
